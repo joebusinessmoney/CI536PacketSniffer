@@ -20,17 +20,17 @@ def processPacket(packet): # this gets the packets, source and destination ip an
         protocol = packet[scapy.IP].proto
         print("Source: " + str(sourceIP) + " Destination: " + str(destinationIP) + " Protocol: " + str(protocol))
 
-    elif packet.haslayer(scapy.TCP):
+    if packet.haslayer(scapy.TCP):
         sourcePort = packet[scapy.TCP].sport
         destinationPort = packet[scapy.TCP].dport
         print("TCP Packet: Source: " + str(sourceIP) + " Port: " + str(sourcePort) + " --> Destination " + str(destinationIP) + " Port: " + str(destinationPort)) 
 
-    elif packet.haslayer(scapy.UDP):
+    if packet.haslayer(scapy.UDP):
         sourcePort = packet[scapy.UDP].sport
         destinationPort = packet[scapy.UDP].dport
         print("UDP Packet: Source: " + str(sourceIP) + " Port: " + str(sourcePort) + " --> Destination " + str(destinationIP) + " Port: " + str(destinationPort))
 
-    elif packet.haslayer(scapy.ICMP):
+    if packet.haslayer(scapy.ICMP):
         print("ICMP Packet: " + str(sourceIP) + " --> " + str(destinationIP))
 
 sniff("eth0") # network interface to be sniffed
