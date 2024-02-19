@@ -2,7 +2,7 @@ import socket
 import sys
 import scapy.all as scapy
 
-def showInterfaces():
+def showInterfaces():                           # gets any possible network interfaces and displays them
     interfaces = scapy.get_windows_if_list()
     for interface in interfaces:
         print(interface)
@@ -33,4 +33,4 @@ def processPacket(packet): # this gets the packets, source and destination ip an
     if packet.haslayer(scapy.ICMP):
         print("ICMP Packet: " + str(sourceIP) + " --> " + str(destinationIP))
 
-sniff("eth0") # network interface to be sniffed
+sniff("eth0") # network interface to be sniffed (should add ability for user to select an interface of their choice)
