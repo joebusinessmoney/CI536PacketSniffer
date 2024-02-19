@@ -1,9 +1,11 @@
 import socket
 import sys
 import scapy.all as scapy
+import platform
 
-userOS = input("Enter the name of the operating system you are using (Windows/Mac/Linux)")
-userNI = input("Enter the network interface you want to scan (can be found using ifconfig/ipconfig)")
+def startUp():
+    print("*** Welcome to the Packet Sniffer ***")
+    print("*** Operating System Detected: " + platform.system() + "***")
 
 def showInterfaces():                           # gets any possible network interfaces and displays them
     interfaces = scapy.get_windows_if_list()
@@ -35,6 +37,5 @@ def processPacket(packet): # this gets the packets, source and destination ip an
 
     if packet.haslayer(scapy.ICMP):
         print("ICMP Packet: " + str(sourceIP) + " --> " + str(destinationIP))
-
-sniff(userNI) # network interface to be sniffed (should add ability for user to select an interface of their choice)
-#sniff("eth0")
+startUp()
+#sniff(userNI) # network interface to be sniffed (should add ability for user to select an interface of their choice)
