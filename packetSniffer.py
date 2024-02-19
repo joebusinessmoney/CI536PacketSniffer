@@ -5,13 +5,12 @@ import platform
 
 def startUp():
     print("*** Welcome to the Packet Sniffer ***")
-    print("*** Operating System Detected: " + platform.system() + "***")
+    print("*** Operating System Detected: " + platform.system() + " ***")
+    print(scapy.ifaces)
 
-def showInterfaces():                           # gets any possible network interfaces and displays them
     interfaces = scapy.get_windows_if_list()
     for interface in interfaces:
         print(interface)
-showInterfaces
 
 def sniff(interface):
     scapy.sniff(iface=interface, store=False, prn=processPacket) # packet sniffer function, takes network interface as
