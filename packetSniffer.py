@@ -5,15 +5,23 @@ import platform
 
 def startUp():
     print("*** Welcome to the Packet Sniffer ***")
+    print("")
+
     print("*** Operating System Detected: " + platform.system() + " ***")
+    print("")
+
     print(scapy.ifaces)
 
-    interfaces = scapy.get_windows_if_list()
-    for interface in interfaces:
-        print(interface)
+    print("")
+    print("*** List of Currently Detected Interfaces - Please Enter the Name of the Interface You Would Like to Sniffing ***")
+    print("*** NOTE - If No Selection made, Sniffing will Happen on all Interfaces ***")
+    userInput = input("")
+
+
+    sniff(userInput) # network interface to be sniffed (should add ability for user to select an interface of their choice)
 
 def sniff(interface):
-    scapy.sniff(iface=interface, store=False, prn=processPacket) # packet sniffer function, takes network interface as
+    scapy.sniff(store=False, prn=processPacket) # packet sniffer function, takes network interface as
                                                                  # an input, captured packets wont be stalled, processPacket
                                                                  # will be called each time a new packet is captured
 
@@ -36,5 +44,5 @@ def processPacket(packet): # this gets the packets, source and destination ip an
 
     if packet.haslayer(scapy.ICMP):
         print("ICMP Packet: " + str(sourceIP) + " --> " + str(destinationIP))
+
 startUp()
-#sniff(userNI) # network interface to be sniffed (should add ability for user to select an interface of their choice)
