@@ -17,15 +17,19 @@ class Main():
 
     def checkDependencies(self, package):
         try:
-            import scapy.all
+            import scapy
             print("*** Scapy is Installed, Initialising Packet Sniffer ***")
             return True
         except:
             install = input("*** Scapy is Not Installed on This Device, This Dependency is Required for This Program. Would You Like to Install it? (Y/n) ***")
 
             if (install == "Y" or "y"):
-                subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-                return True
+                try:
+                    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+                    return True
+                except Exception as error:
+                    print(error)
+                    return False
             else:
                 print("*** Exiting Program y***")
                 quit()
@@ -40,7 +44,7 @@ class Main():
         print("*** Checking if Dependancy 'Scapy' is Installed ... ***")
         time.sleep(3)
 
-        installed = self.checkDependencies("scapy.all")
+        installed = self.checkDependencies("scapy")
     
 
 

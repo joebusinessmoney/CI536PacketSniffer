@@ -1,2 +1,2 @@
 class View():
-    print()
+    print("")

@@ -1,2 +1,2 @@
-class Controller():
-    print()
+class Contoller():
+    print("")
