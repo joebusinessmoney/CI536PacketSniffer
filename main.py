@@ -2,6 +2,7 @@ import platform
 import time
 import subprocess
 import sys
+from mvc import MVC
 
 class Main():
     _banner = ('''
@@ -10,7 +11,7 @@ class Main():
   \__ \ / __// __ `// ___// __// // __ \ / __ `/  / /_/ // __ `// ___// //_// _ \ / __/   \__ \ / __ \ / // /_ / /_ / _ \ / ___/
  ___/ // /_ / /_/ // /   / /_ / // / / // /_/ /  / ____// /_/ // /__ / ,<  /  __// /_    ___/ // / / // // __// __//  __// /    
 /____/ \__/ \__,_//_/    \__//_//_/ /_/ \__, /  /_/     \__,_/ \___//_/|_| \___/ \__/   /____//_/ /_//_//_/  /_/   \___//_/     
-                                       /____/                                                                                   
+                                       /____/       
    ''')
 
     _os = (platform.system())
@@ -23,16 +24,16 @@ class Main():
         except:
             install = input("*** Scapy is Not Installed on This Device, This Dependency is Required for This Program. Would You Like to Install it? (Y/n) ***")
 
-            if (install == "Y" or "y"):
+            if install.lower() in ["y", "yes"]:
                 try:
                     subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+                    print("*** Scapy is Installed, Initialising Packet Sniffer ***")
                     return True
                 except Exception as error:
                     print(error)
                     return False
             else:
-                print("*** Exiting Program y***")
-                quit()
+                return False
             
     def startUp(self):
         print(self._banner)
@@ -45,8 +46,15 @@ class Main():
         time.sleep(3)
 
         installed = self.checkDependencies("scapy")
+
+        if (installed == True):
+            time.sleep(3)
+            
+            mvc = MVC()
+            mvc.mainloop()
+        else:
+            print("*** Exiting Program y***")
+            quit()
     
-
-
 main = Main()
 main.startUp()
