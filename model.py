@@ -1,54 +1,37 @@
-import re
+import scapy.all as scapy
+import os
+from view import View
 
 class Model():
-    def __init__(self, email):
-        self.email = email
+    def __init__(self):
+        self.chosenInterface = None
+        self.view = None
+        self.interfaces = scapy.ifaces 
 
-    @property
-    def email(self):
-        return self.__email
+    def set_view(self, view):
+        self.view = view
 
-    @email.setter
-    def email(self, value):
-        """
-        Validate the email
-        :param value:
-        :return:
-        """
-        pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-        if re.fullmatch(pattern, value):
-            self.__email = value
-        else:
-            raise ValueError(f'Invalid email address: {value}')
+    def sniff(self, chosenInterface): 
+        scapy.sniff(iface=chosenInterface, store=False, prn=self.processPacket) 
 
-    def save(self):
-        """
-        Save the email into a file
-        :return:
-        """
-        with open('emails.txt', 'a') as f:
-            f.write(self.email + '\n')
-
-
-#ignore for now:
-
-class bdfb():
-    def startUp():
-        
-        print(scapy.ifaces)
-
-        print("")
-        print("*** List of Currently Detected Interfaces - Please Enter the Name of the Interface You Would Like to Sniffing ***")
-        print("*** NOTE - If No Selection made, Sniffing will Happen on all Interfaces ***")
-        userInput = input("")
-
-
-        sniff(userInput) # network interface to be sniffed (should add ability for user to select an interface of their choice)
-
-    def sniff(interface):
-        scapy.sniff(store=False, prn=processPacket) # packet sniffer function, takes network interface as
-                                                                 # an input, captured packets wont be stalled, processPacket
-                                                                 # will be called each time a new packet is captured
-
-    def processPacket(packet): # this gets the packets, source and destination ip and port as well as the protocol and displays accordingly
+    def processPacket(self, packet):
         packet.show()
+
+    def setInterface(self, interface):
+        self.chosenInterface = interface
+        result = False
+
+        for available_interface in self.interfaces:
+            if self.chosenInterface == available_interface:
+                result = True
+
+        if (result == True):
+            self.interfaceSuccess()
+        else:
+            self.interfaceError()
+
+    def interfaceSuccess(self):
+        self.view.show_success("Valid interface selected, starting sniffing.")
+
+    def interfaceError(self):
+        self.view.show_error("No matching interface. Please choose from the ones listed above")
