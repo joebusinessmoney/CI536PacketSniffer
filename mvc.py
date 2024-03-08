@@ -6,19 +6,24 @@ from controller import Controller
 
 class MVC(tk.Tk):
     def __init__(self):
-        super().__init__()
+        try:
+            super().__init__()
 
-        self.title('Welcome')
+            self.title('Packet Sniffer')
 
-        # create a model
-        model = Model('hello@gmail.com')
+            # create a model
+            model = Model()
 
-        # create a view and place it on the root window
-        view = View(self)
-        view.grid(row=0, column=0, padx=10, pady=10)
+            # create a view and place it on the root window
+            view = View(self)
+            view.grid(row=0, column=0, padx=10, pady=10)
 
-        # create a controller
-        controller = Controller(model, view)
+            # create a controller
+            controller = Controller(model, view)
 
-        # set the controller to view
-        view.set_controller(controller)
+            # set the controller to view
+            view.set_controller(controller)
+
+            model.set_view(view)
+        except Exception as error:
+            print(error)
