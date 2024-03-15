@@ -3,8 +3,10 @@ from tkinter import ttk
 import scapy.all as scapy
 
 class View(ttk.Frame):
-    def __init__(self, parent):
+    def __init__(self, parent, os):
         super().__init__(parent)
+
+        self.os = os
         
         # set the controller
         self.controller = None
@@ -14,12 +16,16 @@ class View(ttk.Frame):
         self.label = ttk.Label(self, text='List of Currently Detected Interfaces - Please Enter the Name of the Interface You Would Like to Sniff')
         self.label.grid(row=1, column=0, pady=10)
 
+        if os == "Darwin" or "Linux":
+            # Iterate over the interfaces and display them
+            for index, interface in enumerate(interfaces):
+                label_text = f"{index + 1}. {interface}"
+                interface_label = ttk.Label(self, text=label_text)
+                interface_label.grid(row=index + 2, column=0, pady=5)
+        if os == "Windows":
         
-        # Iterate over the interfaces and display them
-        for index, interface in enumerate(interfaces):
-            label_text = f"{index + 1}. {interface}"
-            interface_label = ttk.Label(self, text=label_text)
-            interface_label.grid(row=index + 2, column=0, pady=5)
+        else:
+            self.showError("The Detected Operating System is not Supported by this Packet Sniffer")
 
         # Interface entry
         self.interface_var = tk.StringVar()
