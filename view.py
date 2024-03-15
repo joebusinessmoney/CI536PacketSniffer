@@ -16,29 +16,38 @@ class View(ttk.Frame):
         self.label = ttk.Label(self, text='List of Currently Detected Interfaces - Please Enter the Name of the Interface You Would Like to Sniff')
         self.label.grid(row=1, column=0, pady=10)
 
-        if os == "Darwin" or "Linux":
-            # Iterate over the interfaces and display them
-            for index, interface in enumerate(interfaces):
-                label_text = f"{index + 1}. {interface}"
+        # Handling for Windows
+        if os == 'Windows':
+            # Get the list of network interfaces
+            for index, iface_id in enumerate(interfaces):
+                iface = interfaces[iface_id]
+                # Get the user-friendly description of the interface, if available
+                description = iface.description if hasattr(iface, 'description') else iface.name
+                label_text = f"{index + 1}. {description}"
                 interface_label = ttk.Label(self, text=label_text)
                 interface_label.grid(row=index + 2, column=0, pady=5)
-        if os == "Windows":
-        
+        elif os in ['Darwin', 'Linux']:
+            # Handling for Darwin and Linux
+            for index, iface_id in enumerate(interfaces):
+                iface = interfaces[iface_id]
+                label_text = f"{index + 1}. {iface.name}"
+                interface_label = ttk.Label(self, text=label_text)
+                interface_label.grid(row=index + 2, column=0, pady=5)
         else:
             self.showError("The Detected Operating System is not Supported by this Packet Sniffer")
 
-        # Interface entry
+         # Interface entry
         self.interface_var = tk.StringVar()
         self.interface_entry = ttk.Entry(self, textvariable=self.interface_var, width=15)
-        self.interface_entry.grid(row=len(interfaces) + 2, column=0, pady=10)
+        self.interface_entry.grid(row=2 + len(interfaces), column=0, pady=10)
 
         # Sniff button
         self.sniff_button = ttk.Button(self, text='Sniff', command=self.sniffButtonClicked)
-        self.sniff_button.grid(row=len(interfaces) + 3, column=0, pady=10)
+        self.sniff_button.grid(row=3 + len(interfaces), column=0, pady=10)
 
         # Message label
         self.message_label = ttk.Label(self, text='', foreground='black')
-        self.message_label.grid(row=len(interfaces) + 4, column=0, pady=10)
+        self.message_label.grid(row=4 + len(interfaces), column=0, pady=10)
 
     def setController(self, controller):
         self.controller = controller
