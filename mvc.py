@@ -5,7 +5,7 @@ from view import View
 from controller import Controller
 
 class MVC(tk.Tk):
-    def __init__(self):
+    def __init__(self, os):
         try:
             super().__init__()
 
@@ -15,7 +15,7 @@ class MVC(tk.Tk):
             model = Model()
 
             # create a view and place it on the root window
-            view = View(self)
+            view = View(self, os)
             view.grid(row=0, column=0, padx=10, pady=10)
 
             # create a controller

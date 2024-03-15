@@ -14,7 +14,7 @@ class Main():
                                        /____/       
    ''')
 
-    _os = (platform.system())
+    os = (platform.system())
 
     def checkDependencies(self, package):
         try:
@@ -40,7 +40,7 @@ class Main():
         print("*** Detecting Host Operating System ... ***")
         time.sleep(3)
 
-        print("*** Host Operating Sysem Detected: " + self._os + " ***")
+        print("*** Host Operating Sysem Detected: " + self.os + " ***")
 
         print("*** Checking if Dependancy 'Scapy' is Installed ... ***")
         time.sleep(3)
@@ -50,7 +50,7 @@ class Main():
         if (installed == True):
             time.sleep(3)
             
-            mvc = MVC()
+            mvc = MVC(self.os)
             mvc.mainloop()
         else:
             print("*** Exiting Program ***")
