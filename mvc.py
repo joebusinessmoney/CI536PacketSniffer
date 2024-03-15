@@ -22,7 +22,7 @@ class MVC(tk.Tk):
             controller = Controller(model, view)
 
             # set the controller to view
-            view.set_controller(controller)
+            view.setController(controller)
 
             model.set_view(view)
         except Exception as error:
