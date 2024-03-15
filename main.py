@@ -53,7 +53,7 @@ class Main():
             mvc = MVC()
             mvc.mainloop()
         else:
-            print("*** Exiting Program y***")
+            print("*** Exiting Program ***")
             quit()
     
 main = Main()

@@ -1,6 +1,5 @@
-import scapy.all as scapy
-import os
 from view import View
+import scapy.all as scapy
 
 class Model():
     def __init__(self):
@@ -31,7 +30,7 @@ class Model():
             self.interfaceError()
 
     def interfaceSuccess(self):
-        self.view.show_success("Valid interface selected, starting sniffing.")
+        self.view.showSuccess("Valid interface selected, starting sniffing.")
 
     def interfaceError(self):
-        self.view.show_error("No matching interface. Please choose from the ones listed above")
+        self.view.showError("No matching interface. Please choose from the ones listed above")
