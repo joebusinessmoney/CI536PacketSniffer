@@ -40,7 +40,7 @@ class Main():
         print("*** Detecting Host Operating System ... ***")
         time.sleep(3)
 
-        print("*** Host Operating Sysem Detected: " + self.os + " ***")
+        print("*** Host Operating System Detected: " + self.os + " ***")
 
         print("*** Checking if Dependancy 'Scapy' is Installed ... ***")
         time.sleep(3)

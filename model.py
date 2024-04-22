@@ -18,19 +18,8 @@ class Model():
 
     def setInterface(self, interface):
         self.chosenInterface = interface
-        result = False
+         
+        self.interfaceSelected()
 
-        for available_interface in self.interfaces:
-            if self.chosenInterface == available_interface:
-                result = True
-
-        if (result == True):
-            self.interfaceSuccess()
-        else:
-            self.interfaceError()
-
-    def interfaceSuccess(self):
-        self.view.showSuccess("Valid interface selected, starting sniffing.")
-
-    def interfaceError(self):
-        self.view.showError("No matching interface. Please choose from the ones listed above")
+    def interfaceSelected(self):
+        self.view.showSuccess("Interface Selected, Beginning sniffing ...")
