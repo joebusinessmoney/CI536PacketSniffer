@@ -2,7 +2,6 @@ import platform
 import time
 import subprocess
 import sys
-from mvc import MVC
 
 class Main():
     _banner = ('''
@@ -14,15 +13,15 @@ class Main():
                                        /____/       
    ''')
 
-    os = (platform.system())
+    os = platform.system()
 
     def checkDependencies(self, package):
         try:
             import scapy
             print("*** Scapy is Installed, Initialising Packet Sniffer ***")
             return True
-        except:
-            install = input("*** Scapy is Not Installed on This Device, This Dependency is Required for This Program. Would You Like to Install it? (Y/n) ***")
+        except ImportError:
+            install = input("*** Scapy is Not Installed on This Device. This Dependency is Required for This Program. Would You Like to Install it? (Y/n) ***")
 
             if install.lower() in ["y", "yes"]:
                 try:
@@ -34,7 +33,7 @@ class Main():
                     return False
             else:
                 return False
-            
+
     def startUp(self):
         print(self._banner)
         print("*** Detecting Host Operating System ... ***")
@@ -42,19 +41,20 @@ class Main():
 
         print("*** Host Operating System Detected: " + self.os + " ***")
 
-        print("*** Checking if Dependancy 'Scapy' is Installed ... ***")
+        print("*** Checking if Dependency 'Scapy' is Installed ... ***")
         time.sleep(3)
 
         installed = self.checkDependencies("scapy")
 
-        if (installed == True):
+        if installed:
             time.sleep(3)
             
+            from mvc import MVC
             mvc = MVC(self.os)
             mvc.mainloop()
         else:
             print("*** Exiting Program ***")
             quit()
-    
+
 main = Main()
 main.startUp()

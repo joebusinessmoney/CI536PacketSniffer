@@ -15,7 +15,7 @@ class View(ttk.Frame):
 
         interfaces = scapy.ifaces
 
-        self.label = ttk.Label(self, text='List of Currently Detected Interfaces - Please Click the Interface You Would Like to Sniff From:')
+        self.label = ttk.Label(self, text='List of Currently Detected Interfaces - Please Click the Interface You Would Like to Sniff From and Click the "Sniff" Button:')
         self.label.grid(row=1, column=0, pady=10)
 
         # Handling for Windows, Darwin, and Linux

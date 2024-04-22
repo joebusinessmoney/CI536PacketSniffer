@@ -10,6 +10,8 @@ class Model():
     def set_view(self, view):
         self.view = view
 
+    
+
     def sniff(self, chosenInterface): 
         scapy.sniff(iface=chosenInterface, store=False, prn=self.processPacket) 
 
