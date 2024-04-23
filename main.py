@@ -2,6 +2,7 @@ import platform
 import time
 import subprocess
 import sys
+import os
 
 class Main():
     _banner = ('''
@@ -15,31 +16,47 @@ class Main():
 
     os = platform.system()
 
-    def checkDependencies(self, package):
+    def installScapy(self, package, action):
+        try:
+            command = [sys.executable, "-m", "pip", "install", action, package]
+
+            if self.os == "Linux":
+                command.insert(4, "--target")
+                command.insert(5, "/usr/lib/python3/dist-packages")
+            subprocess.check_call(command)
+
+            if action == "--upgrade":
+                print("*** Scapy Successfully Upgaded, System Will Now Reboot... ***")
+
+                time.sleep(3)
+
+                python_executable = sys.executable
+                os.execl(python_executable, python_executable, *sys.argv)
+            else:
+                print("*** Scapy is Installed, Initialising Packet Sniffer ***")
+                return True
+        except Exception as error:
+            print(error)
+            return False
+
+    def checkDependencies(self):
         try:
             import scapy
-            print("*** Scapy is Installed, Initialising Packet Sniffer ***")
-            return True
+            if scapy.__version__ != "2.5.0":
+                print("*** Older Version of Scapy is Installed, Installing Upgraded Version... ***")
+
+                time.sleep(3)
+                
+                self.installScapy("scapy", "--upgrade")
+            else:
+                print("*** Scapy is Installed, Initialising Packet Sniffer ***")
+                return True
         except ImportError:
             install = input("*** Scapy is Not Installed on This Device. This Dependency is Required for This Program. Would You Like to Install it? (Y/n) ***")
 
             if install.lower() in ["y", "yes"]:
-                if self.os == "Linux":
-                    try:
-                        subprocess.check_call([sys.executable, "-m", "pip", "install", "--target", "/usr/lib/python3/dist-packages", package])
-                        print("*** Scapy is Installed, Initialising Packet Sniffer ***")
-                        return True
-                    except Exception as error:
-                        print(error)
-                        return False  
-                else:
-                    try:
-                        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-                        print("*** Scapy is Installed, Initialising Packet Sniffer ***")
-                        return True
-                    except Exception as error:
-                        print(error)
-                        return False
+                installed = self.installScapy("scapy", "install")
+                return installed
             else:
                 return False
 
@@ -53,9 +70,9 @@ class Main():
         print("*** Checking if Dependency 'Scapy' is Installed ... ***")
         time.sleep(3)
 
-        installed = self.checkDependencies("scapy")
+        complete = self.checkDependencies()
 
-        if installed:
+        if complete:
             time.sleep(3)
             
             from mvc import MVC

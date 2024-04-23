@@ -57,10 +57,10 @@ class View(ttk.Frame):
 
     def showError(self, message):
         self.showMessage(message, 'red')
+        self.interface_var.set("")
 
     def showSuccess(self, message):
         self.showMessage(message, 'green')
-        # Reset the form
         self.interface_var.set("")
 
     def hideMessage(self):
