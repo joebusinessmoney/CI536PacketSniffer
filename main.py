@@ -24,13 +24,22 @@ class Main():
             install = input("*** Scapy is Not Installed on This Device. This Dependency is Required for This Program. Would You Like to Install it? (Y/n) ***")
 
             if install.lower() in ["y", "yes"]:
-                try:
-                    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-                    print("*** Scapy is Installed, Initialising Packet Sniffer ***")
-                    return True
-                except Exception as error:
-                    print(error)
-                    return False
+                if self.os == "Linux":
+                    try:
+                        subprocess.check_call([sys.executable, "-m", "pip", "install", "--target", "/usr/lib/python3/dist-packages", package])
+                        print("*** Scapy is Installed, Initialising Packet Sniffer ***")
+                        return True
+                    except Exception as error:
+                        print(error)
+                        return False  
+                else:
+                    try:
+                        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+                        print("*** Scapy is Installed, Initialising Packet Sniffer ***")
+                        return True
+                    except Exception as error:
+                        print(error)
+                        return False
             else:
                 return False
 

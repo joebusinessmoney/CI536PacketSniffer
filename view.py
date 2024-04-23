@@ -15,8 +15,11 @@ class View(ttk.Frame):
 
         interfaces = scapy.ifaces
 
-        self.label = ttk.Label(self, text='List of Currently Detected Interfaces - Please Click the Interface You Would Like to Sniff From and Click the "Sniff" Button:')
-        self.label.grid(row=1, column=0, pady=10)
+        self.label1 = ttk.Label(self, text='List of Currently Detected Interfaces')
+        self.label1.grid(row=1, column=0, pady=10)
+
+        self.label2 = ttk.Label(self, text='Please Click the Interface You Would Like to Sniff From and Click the "Sniff" Button:')
+        self.label2.grid(row=2, column=0, pady=10)
 
         # Handling for Windows, Darwin, and Linux
         self.interface_radios = []
@@ -25,7 +28,7 @@ class View(ttk.Frame):
             # Get the user-friendly description of the interface, if available
             description = iface.description if hasattr(iface, 'description') else iface.name
             radio = ttk.Radiobutton(self, text=description, variable=self.interface_var, value=iface.name)
-            radio.grid(row=index + 2, column=0, pady=10)
+            radio.grid(row=index + 3, column=0, pady=10)
             self.interface_radios.append(radio)
 
         # Sniff button
