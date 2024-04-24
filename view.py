@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import scapy.all as scapy
 import time
+from Packet import Packet
 
 class View(ttk.Frame):
     def __init__(self, parent, os):
@@ -65,12 +66,14 @@ class View(ttk.Frame):
     def updateUI(self):
         time.sleep(3)
 
-        self.removeWidgets()
+        self.removeInterface()
 
         self.packets_listbox = tk.Listbox(self, width=100)
         self.packets_listbox.grid(row=1, column=0, pady=10, padx=10)
 
-    def removeWidgets(self):
+        self.packets_listbox.bind('<<ListboxSelect>>', self.showPacketInfo)
+
+    def removeInterface(self):
         self.label1.grid_remove()
         self.label2.grid_remove()
         for radio in self.interface_radios:
@@ -79,6 +82,26 @@ class View(ttk.Frame):
         self.message_label.grid_remove()
 
     def updatePackets(self, packet): 
-        self.packets_listbox.insert(tk.END, str(packet))
+        packet_info = self.formatPacketInfo(packet)
+        self.packets_listbox.insert(tk.END, packet_info)
+
         self.packets_listbox.yview_moveto(1.0)
-        
+
+    def formatPacketInfo(self, packet):
+        if packet.ether:
+            src_mac = packet.ether.src_mac
+            dst_mac = packet.ether.dst_mac
+            ether_type = packet.ether.ether_type
+            return f"Source MAC: {src_mac}, Destination MAC: {dst_mac}, Protocol: {ether_type}"
+        else:
+            return "No Information Available"
+
+    def showPacketInfo(self, event):
+        selected_index = self.packets_listbox.curselection()
+        if selected_index:
+            packet_info = self.controller.model.packets[selected_index[0]]
+            src = packet_info.ether.src_mac if packet_info.ether else "N/A"
+            packet_window = tk.Toplevel(self)
+            packet_window.title("Packet Information")
+            packet_label1 = tk.Label(packet_window, text=src)
+            packet_label1.pack()
