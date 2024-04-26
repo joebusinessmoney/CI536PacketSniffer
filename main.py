@@ -37,19 +37,6 @@ class Main():
             print(f"Failed to install {package}: {error}")
             return False
 
-    def checkCustomTkinter(self):
-        try:
-            import customtkinter
-            print("*** Customtkinter is already installed. ***")
-            return True
-        except ImportError:
-            install = input("*** Customtkinter is Not Installed. This Dependency is Required. Would You Like to Install it? (Y/n) ***")
-            if install.lower() in ["y", "yes"]:
-                installed = self.installPackage("customtkinter", "install")
-                return installed
-            else:
-                return False
-
     def checkDependencies(self):
         try:
             import scapy.all as scapy
@@ -70,9 +57,8 @@ class Main():
 
         print("*** Checking if Dependencies are Installed ... ***")
         scapy_installed = self.checkDependencies()
-        customtkinter_installed = self.checkCustomTkinter()
 
-        if scapy_installed and customtkinter_installed:
+        if scapy_installed:
             time.sleep(3)
             from mvc import MVC  # Ensure this import works for your actual MVC architecture
             mvc = MVC(self.os)
