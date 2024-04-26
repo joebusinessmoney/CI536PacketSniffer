@@ -9,7 +9,6 @@ class MVC(ctk.CTk):
             super().__init__()
 
             self.title('Packet Sniffer')
-           #  self.geometry("400x600")  Set the initial size to 800 pixels width and 600 pixels height
 
 
             # Ensuring the window is brought to front after initialization
