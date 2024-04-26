@@ -49,6 +49,19 @@ class Main():
                 return installed
             else:
                 return False
+            
+    def checkCustomTkinter(self):
+        try:
+            import customtkinter
+            print("*** Customtkinter is already installed. ***")
+            return True
+        except ImportError:
+            install = input("*** Customtkinter is Not Installed. This Dependency is Required. Would You Like to Install it? (Y/n) ***")
+            if install.lower() in ["y", "yes"]:
+                installed = self.installPackage("customtkinter", "install")
+                return installed
+            else:
+                return False
 
     def startUp(self):
         print(self._banner)
