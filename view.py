@@ -227,14 +227,17 @@ class View(ttk.Frame):
                     packet_icmp_seq.pack()
 
                 if packet_info.raw:
-                    load_raw = packet_info.raw.load
+                    raw_data = packet_info.raw.load
 
                     packet_raw = tk.Label(packet_window, text="Raw:")
-                    packet_raw_load = tk.Label(packet_window, text="Load:" + str(load_raw))
-
                     packet_raw.pack()
-                    packet_raw_load.pack()
+
+                    chunk_size = 12
+                    for i in range(0, len(raw_data), chunk_size):
+                        chunk = raw_data[i:i + chunk_size]
+                        chunk_hex = ' '.join(f"{byte:02x}" for byte in chunk)
+                        tk.Label(packet_window, text=chunk_hex).pack()
 
             except:
-                packet_none = tk.Label(packet_window, text="No Packet Info Available")
+                packet_none = tk.Label(packet_window, text="Information not Available")
                 packet_none.pack()
