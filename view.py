@@ -1,47 +1,39 @@
 import tkinter as tk
 from tkinter import ttk
 import scapy.all as scapy
-import time
+import customtkinter as ctk
 from Packet import Packet
 
 class View(ttk.Frame):
     def __init__(self, parent, os):
         super().__init__(parent)
-
         self.os = os
         self.controller = None
         self.packets_listbox = None
         self.interface_var = tk.StringVar(value="")
         self.interfaces = scapy.ifaces
 
+        
+
         self.setupUI()
 
     def setupUI(self):
-        # Set styles
-        self.style = ttk.Style()
-        self.style.configure('TFrame', background='#f0f0f0')
-        self.style.configure('TLabel', background='#f0f0f0')
-        self.style.configure('TButton', background='black', foreground='black')
-        self.style.configure('Red.TLabel', background='#f0f0f0', foreground='red')
-        self.style.configure('Listbox.TScrollbar', background='#f0f0f0')
-        self.style.configure('Listbox', background='#ffffff', selectbackground='#4CAF50', selectforeground='white', highlightthickness=0)
-
         # Labels
-        ttk.Label(self, text='List of Currently Detected Interfaces').grid(row=0, column=0, columnspan=2, pady=(10, 5), sticky='w')
-        ttk.Label(self, text='Please select an interface to sniff from:').grid(row=1, column=0, columnspan=2, pady=(5, 10), sticky='w')
+        ctk.CTkLabel(self, text='List of Currently Detected Interfaces').grid(row=0, column=0, columnspan=2, pady=(10, 5), sticky='w')
+        ctk.CTkLabel(self, text='Please select an interface to sniff from:').grid(row=1, column=0, columnspan=2, pady=(5, 10), sticky='w')
 
         # Interface Radiobuttons
         for index, iface_id in enumerate(self.interfaces):
             iface = self.interfaces[iface_id]
             description = iface.description if hasattr(iface, 'description') else iface.name
-            ttk.Radiobutton(self, text=description, variable=self.interface_var, value=iface.name).grid(row=index + 2, column=0, columnspan=2, sticky='w')
+            ctk.CTkRadioButton(self, text=description, variable=self.interface_var, value=iface.name).grid(row=index + 2, column=0, columnspan=2, sticky='w')
 
         # Sniff button
-        self.sniff_button = ttk.Button(self, text='Sniff', command=self.sniffButtonClicked)
+        self.sniff_button = ctk.CTkButton(self, text='Sniff', command=self.sniffButtonClicked)
         self.sniff_button.grid(row=len(self.interfaces) + 2, column=0, columnspan=2, pady=10)
 
         # Message label
-        self.message_label = ttk.Label(self, text='', style='Red.TLabel')
+        self.message_label = ctk.CTkLabel(self, text='')
         self.message_label.grid(row=len(self.interfaces) + 3, column=0, columnspan=2, pady=5)
 
     def setController(self, controller):
