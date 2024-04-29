@@ -52,27 +52,29 @@ class Main():
             
     def checkCustomTkinter(self):
         try:
-            import customtkinter
+            import customtkinter as ctk
             print("*** Customtkinter is already installed. ***")
             return True
         except ImportError:
-            install = input("*** Customtkinter is Not Installed. This Dependency is Required. Would You Like to Install it? (Y/n) ***")
-            if install.lower() in ["y", "yes"]:
+            install = input("*** Customtkinter is Not Installed. This Dependency is Required. Would You Like to Install it? (Y/n) ***").strip().lower()
+            if install in ["y", "yes"]:
                 installed = self.installPackage("customtkinter", "install")
                 return installed
             else:
-                return False
+                 print("*** The application will exit as customtkinter is required. ***")
+                 return False
 
     def startUp(self):
         print(self._banner)
         print("*** Detecting Host Operating System: " + self.os + " ***")
-        time.sleep(3)
+        time.sleep(2)
 
         print("*** Checking if Dependencies are Installed ... ***")
         scapy_installed = self.checkDependencies()
+        customtkinter = self.checkCustomTkinter()
 
-        if scapy_installed:
-            time.sleep(3)
+        if scapy_installed and customtkinter:
+            time.sleep(2)
             from mvc import MVC  # Ensure this import works for your actual MVC architecture
             mvc = MVC(self.os)
             mvc.mainloop()
