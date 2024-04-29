@@ -4,7 +4,7 @@ import scapy.all as scapy
 import customtkinter as ctk
 from Packet import Packet
 
-class View(ttk.Frame):
+class View(ctk.CTkFrame):
     def __init__(self, parent, os):
         super().__init__(parent)
         self.os = os
@@ -13,23 +13,38 @@ class View(ttk.Frame):
         self.interface_var = tk.StringVar(value="")
         self.interfaces = scapy.ifaces
 
-        
-
         self.setupUI()
+    
+    #styling elements
+
+    def green_button_style(widget):
+        widget.configure(fg_color="#20C20E", hover_color="#16880A")
+
+    def red_button_style(widget):
+        widget.configure(fg_color="red", hover_color="darkred")        
+
+    def application_style(master):
+        master.configure(fg_color="#404040", border_color="#404040")
+
 
     def setupUI(self):
+
+        View.application_style(self)        
+
         # Labels
-        ctk.CTkLabel(self, text='List of Currently Detected Interfaces').grid(row=0, column=0, columnspan=2, pady=(10, 5), sticky='w')
-        ctk.CTkLabel(self, text='Please select an interface to sniff from:').grid(row=1, column=0, columnspan=2, pady=(5, 10), sticky='w')
+        self.title = ctk.CTkLabel(self, text='List of Currently Detected Interfaces', text_color="white").grid(row=0, column=0, columnspan=2, pady=(10, 5), sticky='w', padx=(5))
+        self.subtitle = ctk.CTkLabel(self, text='Please select an interface to sniff from:', text_color="white").grid(row=1, column=0, columnspan=2, pady=(5, 10), sticky='w', padx=(10))
 
         # Interface Radiobuttons
         for index, iface_id in enumerate(self.interfaces):
             iface = self.interfaces[iface_id]
             description = iface.description if hasattr(iface, 'description') else iface.name
-            ctk.CTkRadioButton(self, text=description, variable=self.interface_var, value=iface.name).grid(row=index + 2, column=0, columnspan=2, sticky='w')
+            ctk.CTkRadioButton(self, text=description, variable=self.interface_var, value=iface.name, fg_color="#20C20E", hover_color="#16880A", text_color="white", border_color="white").grid(row=index + 2, column=0, columnspan=2, sticky='w', padx=(10))
+        
 
         # Sniff button
         self.sniff_button = ctk.CTkButton(self, text='Sniff', command=self.sniffButtonClicked)
+        View.green_button_style(self.sniff_button)
         self.sniff_button.grid(row=len(self.interfaces) + 2, column=0, columnspan=2, pady=10)
 
         # Message label
@@ -62,12 +77,13 @@ class View(ttk.Frame):
             widget.grid_remove()
 
     def createPacketListBox(self):
-        self.packets_listbox = tk.Listbox(self, width=100, font=('Arial', 18), borderwidth=0, highlightthickness=0)
+        self.packets_listbox = tk.Listbox(self, width=100, font=('sans_serif', 18), borderwidth=0, highlightthickness=0, bg="#404040", fg="white", selectbackground="#16880A", selectforeground="white")
         self.packets_listbox.grid(row=0, column=0, columnspan=2, pady=(10, 5), padx=10, sticky='w')
         self.packets_listbox.bind('<<ListboxSelect>>', self.showPacketInfo)
 
-        self.sniffing_button = ttk.Button(self, text='Stop', command=self.stopSniffing)
-        self.sniffing_button.grid(row = 1, column=0, columnspan=2)
+        self.sniffing_button = ctk.CTkButton(self, text='Stop', command=self.stopSniffing)
+        View.red_button_style(self.sniffing_button)
+        self.sniffing_button.grid(row = 1, column=0, columnspan=2, pady=10)
 
     def stopSniffing(self):
         self.controller.stopSniffing()
@@ -78,8 +94,10 @@ class View(ttk.Frame):
     def updateButton(self, action):
         if action == "Start":
             self.sniffing_button.configure(text="Start", command=self.startSniffing)
+            View.green_button_style(self.sniffing_button)
         else:
             self.sniffing_button.configure(text="Stop", command=self.stopSniffing)
+            View.red_button_style(self.sniffing_button)
 
     def updatePackets(self, packet):
         packet_info = self.formatPacketInfo(packet)
@@ -124,9 +142,9 @@ class View(ttk.Frame):
     def showPacketInfo(self, event):
         selected_index = self.packets_listbox.curselection()
         if selected_index:
-            packet_window = tk.Toplevel(self)
+            packet_window = tk.Toplevel(self, background="#404040")
             packet_window.title("Packet Information")
-
+            
             packet_info = self.controller.model.packets[selected_index[0]]
 
             try:
