@@ -18,7 +18,7 @@ class Main():
 
     def installPackage(self, package, action):
         try:
-            command = [sys.executable, "-m", "pip", action, package]
+            command = [sys.executable, "-m", "pip", "install", action, package]
 
             if self.os == "Linux":
                 command.insert(4, "--target")
@@ -37,11 +37,16 @@ class Main():
             print(f"Failed to install {package}: {error}")
             return False
 
-    def checkDependencies(self):
+    def checkScapy(self):
         try:
-            import scapy.all as scapy
-            print("*** Scapy is Installed, Initialising Packet Sniffer ***")
-            return True
+            import scapy
+            if scapy.__version__ != "2.5.0":
+                print("*** Older Version of Scapy is Installed, Installing Updated Version ***")
+                installed = self.installPackage("scapy", "--upgrade")
+                return installed
+            else:
+                print("*** Scapy is Already Installed ***")
+                return True
         except ImportError:
             install = input("*** Scapy is Not Installed. This Dependency is Required. Would You Like to Install it? (Y/n) ***")
             if install.lower() in ["y", "yes"]:
@@ -53,15 +58,14 @@ class Main():
     def checkCustomTkinter(self):
         try:
             import customtkinter as ctk
-            print("*** Customtkinter is already installed. ***")
+            print("*** Customtkinter is Already Installed ***")
             return True
         except ImportError:
-            install = input("*** Customtkinter is Not Installed. This Dependency is Required. Would You Like to Install it? (Y/n) ***").strip().lower()
+            install = input("*** CustomTkinter is Not Installed. This Dependency is Required. Would You Like to Install it? (Y/n) ***").strip().lower()
             if install in ["y", "yes"]:
                 installed = self.installPackage("customtkinter", "install")
                 return installed
             else:
-                 print("*** The application will exit as customtkinter is required. ***")
                  return False
 
     def startUp(self):
@@ -70,12 +74,12 @@ class Main():
         time.sleep(2)
 
         print("*** Checking if Dependencies are Installed ... ***")
-        scapy_installed = self.checkDependencies()
+        scapy = self.checkScapy()
         customtkinter = self.checkCustomTkinter()
 
-        if scapy_installed and customtkinter:
+        if scapy and customtkinter:
             time.sleep(2)
-            from mvc import MVC  # Ensure this import works for your actual MVC architecture
+            from mvc import MVC
             mvc = MVC(self.os)
             mvc.mainloop()
         else:
