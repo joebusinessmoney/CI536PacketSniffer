@@ -15,8 +15,9 @@ class Model():
         self.chosenInterface = None
         self.view = None
         self.interfaces = scapy.ifaces 
-
         self.packets = []     
+        self.sniff_event = threading.Event()
+        self.sniff_event.set() 
 
     def set_view(self, view):
         self.view = view
@@ -25,7 +26,8 @@ class Model():
         threading.Thread(target=self.sniff_thread, args=(chosenInterface,), daemon=True).start()
 
     def sniff_thread(self, chosenInterface):
-        scapy.sniff(iface=chosenInterface, prn=self.processPacket)
+        while self.sniff_event.is_set():
+            packets = scapy.sniff(iface=chosenInterface, prn=self.processPacket, timeout=1)
 
     def processPacket(self, packet):
         packet_info = Packet()
@@ -90,11 +92,18 @@ class Model():
 
     def setInterface(self, interface):
         self.chosenInterface = interface
-         
         self.interfaceSelected()
-
         self.sniff(self.chosenInterface)
 
     def interfaceSelected(self):
         self.view.updateUI()
+
+    def stopSniffing(self):
+        self.sniff_event.clear()
+        self.view.updateButton("Start")
+
+    def startSniffing(self):
+        self.sniff_event.set()
+        threading.Thread(target=self.sniff_thread, args=(self.chosenInterface,), daemon=True).start()
+        self.view.updateButton("Stop")
     
