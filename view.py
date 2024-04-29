@@ -70,9 +70,24 @@ class View(ttk.Frame):
             widget.grid_remove()
 
     def createPacketListBox(self):
-        self.packets_listbox = tk.Listbox(self, width=100, font=('Arial', 10), borderwidth=0, highlightthickness=0)
+        self.packets_listbox = tk.Listbox(self, width=100, font=('Arial', 18), borderwidth=0, highlightthickness=0)
         self.packets_listbox.grid(row=0, column=0, columnspan=2, pady=(10, 5), padx=10, sticky='w')
         self.packets_listbox.bind('<<ListboxSelect>>', self.showPacketInfo)
+
+        self.sniffing_button = ttk.Button(self, text='Stop', command=self.stopSniffing)
+        self.sniffing_button.grid(row = 1, column=0, columnspan=2)
+
+    def stopSniffing(self):
+        self.controller.stopSniffing()
+    
+    def startSniffing(self):
+        self.controller.startSniffing()
+
+    def updateButton(self, action):
+        if action == "Start":
+            self.sniffing_button.configure(text="Start", command=self.startSniffing)
+        else:
+            self.sniffing_button.configure(text="Stop", command=self.stopSniffing)
 
     def updatePackets(self, packet):
         packet_info = self.formatPacketInfo(packet)
@@ -232,7 +247,8 @@ class View(ttk.Frame):
                     packet_raw = tk.Label(packet_window, text="Raw:")
                     packet_raw.pack()
 
-                    chunk_size = 12
+                    
+                    chunk_size = 16
                     for i in range(0, len(raw_data), chunk_size):
                         chunk = raw_data[i:i + chunk_size]
                         chunk_hex = ' '.join(f"{byte:02x}" for byte in chunk)
