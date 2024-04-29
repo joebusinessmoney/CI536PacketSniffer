@@ -40,13 +40,18 @@ class Main():
     def checkScapy(self):
         try:
             import scapy
-            if scapy.__version__ != "2.5.0":
-                print("*** Older Version of Scapy is Installed, Installing Updated Version ***")
-                installed = self.installPackage("scapy", "--upgrade")
-                return installed
-            else:
-                print("*** Scapy is Already Installed ***")
-                return True
+
+            if self.os == "Linux":
+                if scapy.__version__ != "2.5.0":
+                    print("*** Older Version of Scapy is Installed, Installing Updated Version ***")
+                    installed = self.installPackage("scapy", "--upgrade")
+                    return installed
+                else:
+                    print("*** Scapy is Already Installed ***")
+                    return True
+                    
+            print("*** Scapy is Already Installed ***")
+            return True
         except ImportError:
             install = input("*** Scapy is Not Installed. This Dependency is Required. Would You Like to Install it? (Y/n) ***")
             if install.lower() in ["y", "yes"]:
