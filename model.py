@@ -10,6 +10,7 @@ import time
 import scapy.all as scapy
 import threading
 
+
 class Model():
     def __init__(self):
         self.chosenInterface = None
@@ -18,6 +19,8 @@ class Model():
         self.packets = []     
         self.sniff_event = threading.Event()
         self.sniff_event.set() 
+        self.filter = ""
+
 
     def set_view(self, view):
         self.view = view
@@ -27,7 +30,10 @@ class Model():
 
     def sniff_thread(self, chosenInterface):
         while self.sniff_event.is_set():
-            packets = scapy.sniff(iface=chosenInterface, prn=self.processPacket, timeout=1)
+            if self.filter:
+                packets = scapy.sniff(iface=chosenInterface, filter=self.filter, prn=self.processPacket, timeout=1)
+            else:
+                packets = scapy.sniff(iface=chosenInterface, prn=self.processPacket, timeout=1)
 
     def processPacket(self, packet):
         packet_info = Packet()
@@ -107,3 +113,18 @@ class Model():
         threading.Thread(target=self.sniff_thread, args=(self.chosenInterface,), daemon=True).start()
         self.view.updateButton("Stop")
     
+    def restartSniffing(self):
+        # Restart sniffing with the new filter
+        self.stopSniffing()
+        self.startSniffing()
+    
+    def setFilter(self, filter_string):
+        self.filter = filter_string
+        if self.sniff_event.is_set():  # Check if sniffing is active
+            self.restartSniffing()
+    
+    def clearFilter(self):
+        self.filter = ""
+
+    
+

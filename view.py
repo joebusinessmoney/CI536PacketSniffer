@@ -13,8 +13,6 @@ class View(ttk.Frame):
         self.interface_var = tk.StringVar(value="")
         self.interfaces = scapy.ifaces
 
-        
-
         self.setupUI()
 
     def setupUI(self):
@@ -35,6 +33,7 @@ class View(ttk.Frame):
         # Message label
         self.message_label = ctk.CTkLabel(self, text='')
         self.message_label.grid(row=len(self.interfaces) + 3, column=0, columnspan=2, pady=5)
+        
 
     def setController(self, controller):
         self.controller = controller
@@ -43,6 +42,8 @@ class View(ttk.Frame):
         selected_interface = self.interface_var.get()
         if selected_interface:
             self.controller.setInterface(selected_interface)
+            self.controller.startSniffing()
+            self.displayFilterBar()  # Display filter bar after starting sniffing
         else:
             self.showError("Please select an interface.")
 
@@ -68,6 +69,11 @@ class View(ttk.Frame):
 
         self.sniffing_button = ttk.Button(self, text='Stop', command=self.stopSniffing)
         self.sniffing_button.grid(row = 1, column=0, columnspan=2)
+
+        # Remove Filter Button
+        self.remove_filter_button = tk.Button(self, text="Remove Filter", command=self.removeFilter)
+        self.remove_filter_button.grid(row=4, column=2, padx=(5, 10), pady=5)
+
 
     def stopSniffing(self):
         self.controller.stopSniffing()
@@ -249,3 +255,50 @@ class View(ttk.Frame):
             except:
                 packet_none = tk.Label(packet_window, text="Information not Available")
                 packet_none.pack()
+
+    def removeFilter(self):
+        # Clear the filter entry widget
+        self.filter_entry.delete(0, tk.END)
+
+        # Resets any filter conditions in the model and refresh the packet list
+        if self.controller:
+            self.controller.clearFilter()
+            self.refreshPacketList()  # refreshes the packet display
+        
+    def refreshPacketList(self):
+        # Clear and re-display all packets or as per the current model state
+        self.packets_listbox.delete(0, tk.END)
+        for packet in self.controller.model.packets:
+            self.updatePackets(packet)
+
+    def displayFilterBar(self):
+        # Check if filter elements already exist to prevent recreation
+            if not hasattr(self, 'filter_entry'):
+                self.filter_entry = tk.Entry(self)
+                self.filter_entry.grid(row=len(self.interfaces) + 4, column=0, padx=(10, 5), pady=(5, 5), sticky="ew")
+                self.filter_button = tk.Button(self, text="Apply Filter", command=self.applyFilter)
+                self.filter_button.grid(row=len(self.interfaces) + 4, column=1, padx=(10, 5), pady=5, sticky="w")
+
+    def applyFilter(self):
+        filter_string = self.filter_entry.get().strip()
+        self.filterPackets(filter_string)
+
+    def filterPackets(self, filter_string):
+        self.packets_listbox.delete(0, tk.END)  # Clear the listbox before applying the new filter
+        filter_string = filter_string.lower()  # Convert filter string to lowercase once
+
+    # Filter and display packets
+        for packet in self.controller.model.packets:
+        # Determine the protocol from the packet attributes
+            if packet.tcp:
+                protocol = "TCP"
+            elif packet.udp:
+                protocol = "UDP"
+            elif packet.icmp:
+                protocol = "ICMP"
+            else:
+                protocol = "Unknown"
+
+        # Check if the filter string is in the source IP or the protocol
+            if hasattr(packet, 'ip') and packet.ip and (filter_string in packet.ip.src_ip.lower() or filter_string in protocol.lower()):
+                self.updatePackets(packet)

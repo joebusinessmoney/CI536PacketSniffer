@@ -16,6 +16,9 @@ class Main():
 
     os = platform.system()
 
+    def __init__(self):
+        pass
+
     def installPackage(self, package, action):
         try:
             command = [sys.executable, "-m", "pip", "install", action, package]

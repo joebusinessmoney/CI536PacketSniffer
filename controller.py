@@ -11,3 +11,11 @@ class Controller():
 
     def startSniffing(self):
         self.model.startSniffing()
+    
+    def setFilter(self, filter_string):
+        self.model.setFilter(filter_string)
+    
+    def clearFilter(self):
+        self.model.clearFilter()  # This method should reset relevant model state
+        self.view.refreshPacketList()  # Refresh the view to show all packets
+
