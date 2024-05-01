@@ -70,9 +70,11 @@ class View(ttk.Frame):
         self.sniffing_button = ttk.Button(self, text='Stop', command=self.stopSniffing)
         self.sniffing_button.grid(row = 1, column=0, columnspan=2)
 
-        # Remove Filter Button
         self.remove_filter_button = tk.Button(self, text="Remove Filter", command=self.removeFilter)
-        self.remove_filter_button.grid(row=4, column=2, padx=(5, 10), pady=5)
+        self.remove_filter_button.grid(row=len(self.interfaces) + 5, column=1, padx=(10, 5), pady=5, sticky="w")
+
+
+        
 
 
     def stopSniffing(self):
