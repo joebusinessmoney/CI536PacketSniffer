@@ -33,7 +33,7 @@ class MVC(ctk.CTk):
             print(f"Initialization Error: {error}")
 
     def create_widgets(self):
-        # Example widget - this method should be used to create widgets.
+        # widget
         label = ctk.CTkLabel(self, text="Initialize UI Components Here")
         label.pack(pady=20)
 

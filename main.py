@@ -16,6 +16,9 @@ class Main():
 
     os = platform.system()
 
+    def __init__(self):
+        pass
+
     def installPackage(self, package, action):
         try:
             command = [sys.executable, "-m", "pip", "install", action, package]
@@ -40,13 +43,18 @@ class Main():
     def checkScapy(self):
         try:
             import scapy
-            if scapy.__version__ != "2.5.0":
-                print("*** Older Version of Scapy is Installed, Installing Updated Version ***")
-                installed = self.installPackage("scapy", "--upgrade")
-                return installed
-            else:
-                print("*** Scapy is Already Installed ***")
-                return True
+
+            if self.os == "Linux":
+                if scapy.__version__ != "2.5.0":
+                    print("*** Older Version of Scapy is Installed, Installing Updated Version ***")
+                    installed = self.installPackage("scapy", "--upgrade")
+                    return installed
+                else:
+                    print("*** Scapy is Already Installed ***")
+                    return True
+                    
+            print("*** Scapy is Already Installed ***")
+            return True
         except ImportError:
             install = input("*** Scapy is Not Installed. This Dependency is Required. Would You Like to Install it? (Y/n) ***")
             if install.lower() in ["y", "yes"]:
