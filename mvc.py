@@ -10,7 +10,6 @@ class MVC(ctk.CTk):
 
             self.title('Packet Sniffer')
 
-
             # Ensuring the window is brought to front after initialization
             self.after(100, self.bring_to_front)
 

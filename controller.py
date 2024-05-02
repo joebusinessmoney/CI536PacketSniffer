@@ -11,6 +11,9 @@ class Controller():
 
     def startSniffing(self):
         self.model.startSniffing()
+
+    def analyse(self):
+        self.model.analyse()
     
     def setFilter(self, filter_string):
         self.model.setFilter(filter_string)

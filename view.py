@@ -140,14 +140,26 @@ class View(ctk.CTkFrame):
         self.remove_filter_button.grid(row=len(self.interfaces) + 5, column=1, padx=(10, 5), pady=5, sticky="w")  
 
 
+        self.analyse_button = ttk.Button(self, text='Analyse', command=self.analyse)
+        self.analyse_button.grid(row = 2, column=0, columnspan=2)
+
     def stopSniffing(self):
         self.controller.stopSniffing()
     
     def startSniffing(self):
         self.controller.startSniffing()
 
+    def analyse(self):
+        self.controller.analyse()
+
     def updateButton(self, action):
-        if action == "Start":
+        if action == "Pause":
+            self.sniffing_button.configure(state=tk.DISABLED)
+            self.analyse_button.configure(state=tk.DISABLED)
+        elif action == "Unpause":
+            self.sniffing_button.configure(state=tk.NORMAL)
+            self.analyse_button.configure(state=tk.NORMAL)
+        elif action == "Start":
             self.sniffing_button.configure(text="Start", command=self.startSniffing)
             View.green_button_style(self.sniffing_button)
         else:
