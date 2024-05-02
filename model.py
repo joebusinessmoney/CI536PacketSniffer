@@ -9,6 +9,7 @@ from UDPInfo import UDPInfo
 import time
 import scapy.all as scapy
 import threading
+from ai import AI
 
 class Model():
     def __init__(self):
@@ -106,4 +107,19 @@ class Model():
         self.sniff_event.set()
         threading.Thread(target=self.sniff_thread, args=(self.chosenInterface,), daemon=True).start()
         self.view.updateButton("Stop")
+
+    def analyse(self):
+        ai = AI(self)
+        self.sniff_event.clear()
+        self.view.updateButton("Pause")
+        ai.startProcessing()
+    
+    def endAnalyse(self):
+        self.sniff_event.set()
+        threading.Thread(target=self.sniff_thread, args=(self.chosenInterface,), daemon=True).start()
+        self.view.updateButton("Unpause")
+
+    def getPackets(self):
+        return self.packets
+
     

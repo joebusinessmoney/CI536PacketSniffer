@@ -11,3 +11,6 @@ class Controller():
 
     def startSniffing(self):
         self.model.startSniffing()
+
+    def analyse(self):
+        self.model.analyse()
