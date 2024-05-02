@@ -128,7 +128,6 @@ class Model():
     def getPackets(self):
         return self.packets
 
-    
     def restartSniffing(self):
         # Restart sniffing with the new filter
         self.stopSniffing()

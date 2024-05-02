@@ -55,12 +55,12 @@ class AI():
 
             self.model.endAnalyse()
         except Exception as e:
-            self.ai_message['text'] = f"Error Generating Predictions: {str(e)}"
+            self.ai_message['text'] = f"Error Generating Predictions, If Issue Continues Please Report on Our Feedback Page: {str(e)}"
             return
 
     def attributeHandling(self, unpacked_data):
         if unpacked_data is None:
-            print("No unpacked data found. Please run processData first.")
+            self.ai_message['text'] = ("Error Generating Predictions, If Issue Continues Please Report on Our Feedback Page")
             return
 
         # Create DataFrame with all columns from columns_to_fill
@@ -189,7 +189,7 @@ class AI():
         canvas.create_arc(50, 50, 250, 250, start=0, extent=total_angle, fill="green")
         canvas.create_arc(50, 50, 250, 250, start=total_angle, extent=suspicious_angle, fill="red")
 
-        # Add labels
+        # Add label
         canvas.create_text(150, 20, text="Packet Distribution", font=("Arial", 14))
 
         
