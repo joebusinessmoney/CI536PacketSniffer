@@ -75,6 +75,33 @@ class Main():
                 return installed
             else:
                  return False
+            
+    def checkPandas(self):
+        try:
+            import pandas as pd
+            print("*** Pandas is Already Installed ***")
+            return True
+        except ImportError:
+            install = input("*** Pandas is Not Installed. This Dependency is Required. Would You Like to Install it? (Y/n) ***").strip().lower()
+            if install in ["y", "yes"]:
+                installed = self.installPackage("pandas", "install")
+                return installed
+            else:
+                 return False
+          
+    def checkSklearn(self):
+        try:
+            from sklearn.ensemble import RandomForestClassifier
+            print("*** Sklearn is Already Installed ***")
+            return True
+        except ImportError:
+            install = input("*** Sklearn is Not Installed. This Dependency is Required. Would You Like to Install it? (Y/n) ***").strip().lower()
+            if install in ["y", "yes"]:
+                installed = self.installPackage("scikit-learn", "install")
+                return installed
+            else:
+                 return False
+
 
     def startUp(self):
         print(self._banner)
@@ -84,8 +111,10 @@ class Main():
         print("*** Checking if Dependencies are Installed ... ***")
         scapy = self.checkScapy()
         customtkinter = self.checkCustomTkinter()
+        pandas = self.checkPandas()
+        sklearn = self.checkSklearn()
 
-        if scapy and customtkinter:
+        if scapy and customtkinter and pandas and sklearn:
             time.sleep(2)
             from mvc import MVC
             mvc = MVC(self.os)
