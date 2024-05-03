@@ -21,12 +21,15 @@ class View(ctk.CTkFrame):
         widget.configure(fg_color="#20C20E", hover_color="#16880A")
 
     def red_button_style(widget):
-        widget.configure(fg_color="red", hover_color="darkred")        
+        widget.configure(fg_color="#FF4122", hover_color="#ED3419")        
 
     def application_style(master):
         master.configure(fg_color="#404040", border_color="#404040")
 
-    
+    def blue_button_style(widget):
+        widget.configure(fg_color="#24A0ED", hover_color="#006DB5")
+
+
     def setupUI(self):
 
         View.application_style(self)        
@@ -54,54 +57,6 @@ class View(ctk.CTkFrame):
 
     def setController(self, controller):
         self.controller = controller
-    
-    def removeFilter(self):
-            # Clear the filter entry widget
-            self.filter_entry.delete(0, tk.END)
-
-            # Resets any filter conditions in the model and refresh the packet list
-            if self.controller:
-                self.controller.clearFilter()
-                self.refreshPacketList()  # refreshes the packet display
-            
-    def refreshPacketList(self):
-            # Clear and re-display all packets or as per the current model state
-            self.packets_listbox.delete(0, tk.END)
-            for packet in self.controller.model.packets:
-                self.updatePackets(packet)
-
-    def displayFilterBar(self):
-            # Check if filter elements already exist to prevent recreation
-                if not hasattr(self, 'filter_entry'):
-                    self.filter_entry = tk.Entry(self)
-                    self.filter_entry.grid(row=len(self.interfaces) + 4, column=0, padx=(10, 5), pady=(5, 5), sticky="ew")
-                    self.filter_button = tk.Button(self, text="Apply Filter", command=self.applyFilter)
-                    self.filter_button.grid(row=len(self.interfaces) + 4, column=1, padx=(10, 5), pady=5, sticky="w")
-
-    def applyFilter(self):
-            filter_string = self.filter_entry.get().strip()
-            self.filterPackets(filter_string)
-
-    def filterPackets(self, filter_string):
-            self.packets_listbox.delete(0, tk.END)  # Clear the listbox before applying the new filter
-            filter_string = filter_string.lower()  # Convert filter string to lowercase once
-
-        # Filter and display packets
-            for packet in self.controller.model.packets:
-            # Determine the protocol from the packet attributes
-                if packet.tcp:
-                    protocol = "TCP"
-                elif packet.udp:
-                    protocol = "UDP"
-                elif packet.icmp:
-                    protocol = "ICMP"
-                else:
-                    protocol = "Unknown"
-
-            # Check if the filter string is in the source IP or the protocol
-                if hasattr(packet, 'ip') and packet.ip and (filter_string in packet.ip.src_ip.lower() or filter_string in protocol.lower()):
-                    self.updatePackets(packet)
-
 
     def sniffButtonClicked(self):
         selected_interface = self.interface_var.get()
@@ -134,13 +89,15 @@ class View(ctk.CTkFrame):
 
         self.sniffing_button = ctk.CTkButton(self, text='Stop', command=self.stopSniffing)
         View.red_button_style(self.sniffing_button)
-        self.sniffing_button.grid(row = 1, column=0, columnspan=2, pady=10)
+        self.sniffing_button.grid(row=len(self.interfaces) + 3, column=1, padx=(10, 5), pady=5, sticky="w")
 
-        self.remove_filter_button = tk.Button(self, text="Remove Filter", command=self.removeFilter)
-        self.remove_filter_button.grid(row=len(self.interfaces) + 5, column=1, padx=(10, 5), pady=5, sticky="w")  
+        self.remove_filter_button = ctk.CTkButton(self, text="Remove Filter", command=self.removeFilter)
+        View.red_button_style(self.remove_filter_button)
+        self.remove_filter_button.grid(row=len(self.interfaces) + 4, column=1, padx=20, pady=5)
 
-        self.analyse_button = ttk.Button(self, text='Analyse', command=self.analyse)
-        self.analyse_button.grid(row = 2, column=0, columnspan=2)
+        self.analyse_button = ctk.CTkButton(self, text='Analyse', command=self.analyse)
+        View.blue_button_style(self.analyse_button)
+        self.analyse_button.grid(row=len(self.interfaces) + 3, column=1, padx=20, pady=5)
 
     def stopSniffing(self):
         self.controller.stopSniffing()
@@ -155,17 +112,18 @@ class View(ctk.CTkFrame):
         if action == "Pause":
             self.sniffing_button.configure(state=tk.DISABLED)
             self.analyse_button.configure(state=tk.DISABLED)
-            self.filter_button.config(state=tk.DISABLED)
-            self.remove_filter_button.config(state=tk.DISABLED)
+            self.filter_button.configure(state=tk.DISABLED)
+            self.remove_filter_button.configure(state=tk.DISABLED)
+           # action = "Stop"
         elif action == "Unpause":
             self.sniffing_button.configure(state=tk.NORMAL)
             self.analyse_button.configure(state=tk.NORMAL)
-            self.filter_button.config(state=tk.NORMAL)
-            self.remove_filter_button.config(state=tk.NORMAL)
+            self.filter_button.configure(state=tk.NORMAL)
+            self.remove_filter_button.configure(state=tk.NORMAL)
         elif action == "Start":
             self.sniffing_button.configure(text="Start", command=self.startSniffing)
             View.green_button_style(self.sniffing_button)
-        else:
+        elif action == "Stop":
             self.sniffing_button.configure(text="Stop", command=self.stopSniffing)
             View.red_button_style(self.sniffing_button)
 
@@ -173,6 +131,90 @@ class View(ctk.CTkFrame):
         packet_info = self.formatPacketInfo(packet)
         self.packets_listbox.insert(tk.END, packet_info)
         self.packets_listbox.yview_moveto(1.0)
+
+    def formatPacketInfo(self, packet):
+        if packet.ip:
+            src_ip = packet.ip.src_ip
+            dst_ip = packet.ip.dst_ip
+            protocol_ip = packet.ip.proto
+            protocol = "Unknown"
+
+            if protocol_ip == 6:
+                protocol = "TCP"
+            elif protocol_ip == 17:
+                protocol = "UDP"
+            elif protocol_ip == 1:
+                protocol = "ICMP"
+
+            return f"Source IP: {src_ip}, Destination IP: {dst_ip}, Protocol: {protocol}"
+        elif packet.ether:
+            src_mac = packet.ether.src_mac
+            dst_mac = packet.ether.dst_mac
+            ether_type = packet.ether.ether_type
+            protocol = "Unknown"
+
+            if ether_type == 2048:
+                protocol = "IPv4"
+            elif ether_type == 2054:
+                protocol = "ARP"
+                if dst_mac == "ff:ff:ff:ff:ff:ff":
+                    dst_mac = "BROADCAST"
+            elif ether_type == 34525:
+                protocol = "IPv6"
+
+            return f"Source MAC: {src_mac}, Destination MAC: {dst_mac}, Protocol: {protocol}"
+        else:
+            return "No Information Available"
+        
+
+    def removeFilter(self):
+            # Clear the filter entry widget
+            self.filter_entry.delete(0, tk.END)
+
+            # Resets any filter conditions in the model and refresh the packet list
+            if self.controller:
+                self.controller.clearFilter()
+                self.refreshPacketList()  # refreshes the packet display
+            
+    def refreshPacketList(self):
+            # Clear and re-display all packets or as per the current model state
+            self.packets_listbox.delete(0, tk.END)
+            for packet in self.controller.model.packets:
+                self.updatePackets(packet)
+
+    def displayFilterBar(self):
+            # Check if filter elements already exist to prevent recreation
+                if not hasattr(self, 'filter_entry'):
+                    self.filter_entry = ctk.CTkEntry(self, placeholder_text="Enter IP or Protocol to filter")
+                    self.filter_entry.grid(row=len(self.interfaces) + 4, column=0, padx=(10, 5), pady=(5, 5), sticky="ew")
+                    self.filter_button = ctk.CTkButton(self, text="Apply Filter", command=self.applyFilter)
+                    View.blue_button_style(self.filter_button)
+                    self.filter_button.grid(row=len(self.interfaces) + 4, column=1, padx=(10, 5), pady=5, sticky="w")
+
+    def applyFilter(self):
+            filter_string = self.filter_entry.get().strip()
+            self.filterPackets(filter_string)
+
+    def filterPackets(self, filter_string):
+            self.packets_listbox.delete(0, tk.END)  # Clear the listbox before applying the new filter
+            filter_string = filter_string.lower()  # Convert filter string to lowercase once
+
+        # Filter and display packets
+            for packet in self.controller.model.packets:
+            # Determine the protocol from the packet attributes
+                if packet.tcp:
+                    protocol = "TCP"
+                elif packet.udp:
+                    protocol = "UDP"
+                elif packet.icmp:
+                    protocol = "ICMP"
+                else:
+                    protocol = "Unknown"
+
+            # Check if the filter string is in the source IP or the protocol
+                if hasattr(packet, 'ip') and packet.ip and (filter_string in packet.ip.src_ip.lower() or filter_string in protocol.lower()):
+                    self.updatePackets(packet)
+
 
     def formatPacketInfo(self, packet):
         if packet.ip:

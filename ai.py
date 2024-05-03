@@ -5,6 +5,7 @@ from sklearn.ensemble import RandomForestClassifier
 from tkinter import ttk
 import socket
 import tkinter as tk
+import customtkinter as ctk
 
 class AI():
     def __init__(self, model):
@@ -14,11 +15,18 @@ class AI():
         self.suspicious = None
         self.suspicious_ips = None
 
+    def label_style(widget):
+        widget.configure(fg_color="#404040", text_color="#ffffff")
+        
     def displayWindow(self):    
-        self.ai_window = tk.Toplevel()
+        self.ai_window = tk.Toplevel(background="#404040")
         self.ai_window.title("Packet Analysis")
 
-        self.ai_message = ttk.Label(self.ai_window, text="Analysing Collected Packets, This May Take Some Time...")
+        label_style = {'background': '#404040', 'foreground': 'white', 'anchor': 'w', 'font': ('Helvetica', 16)}
+        title_style = {'background': '#404040', 'foreground': 'white', 'font': 'bold, 20', 'relief': 'raised'}
+
+        self.ai_message = tk.Label(self.ai_window, text="Analysing Collected Packets, This May Take Some Time...", **label_style)
+
         self.ai_message.pack(pady=10)
 
     def getPackets(self):
@@ -162,23 +170,31 @@ class AI():
         self.suspicious_ips = list(suspicious_ips)
 
     def processAnalysis(self):
-        self.total_packets_label = ttk.Label(self.ai_window, text="Total Packets: " + str(self.total_packets))
+
+        # styling elements
+
+        label_style = {'background': '#404040', 'foreground': 'white', 'anchor': 'w', 'font': ('Helvetica', 16)}
+        red_style = {'background': '#404040', 'foreground': 'red', 'anchor': 'w', 'font': ('Helvetica', 16)}
+        green_style = {'background': '#404040', 'foreground': 'green', 'anchor': 'w', 'font': ('Helvetica', 16)}
+        title_style = {'background': '#404040', 'foreground': 'white', 'font': 'bold, 20', 'relief': 'raised'} 
+
+        self.total_packets_label = ttk.Label(self.ai_window, text="Total Packets: " + str(self.total_packets), **green_style)
         self.total_packets_label.pack(pady=10)
 
-        self.suspicious_label = ttk.Label(self.ai_window, text="Total Suspicious Packets Detected: " + str(self.suspicious))
+        self.suspicious_label = ttk.Label(self.ai_window, text="Total Suspicious Packets Detected: " + str(self.suspicious), **red_style)
         self.suspicious_label.pack(pady=10)
 
         # Display suspicious IPs
         if self.suspicious_ips:
             suspicious_ips_text = "\n".join(str(ip) for ip in self.suspicious_ips)
-            self.suspicious_ips_label = ttk.Label(self.ai_window, text="Suspicious IPs:\n" + suspicious_ips_text)
+            self.suspicious_ips_label = ttk.Label(self.ai_window, text="Suspicious IPs:\n" + suspicious_ips_text, **label_style)
             self.suspicious_ips_label.pack(pady=10)
         else:
-            self.suspicious_ips_label = ttk.Label(self.ai_window, text="No suspicious IPs detected.")
+            self.suspicious_ips_label = ttk.Label(self.ai_window, text="No suspicious IPs detected.", **title_style)
             self.suspicious_ips_label.pack(pady=10)
 
 
-        canvas = tk.Canvas(self.ai_window, width=300, height=300)
+        canvas = tk.Canvas(self.ai_window, width=300, height=300, background="#404040")
         canvas.pack()
 
         # Calculate the angles for total packets and suspicious packets
@@ -190,7 +206,7 @@ class AI():
         canvas.create_arc(50, 50, 250, 250, start=total_angle, extent=suspicious_angle, fill="red")
 
         # Add label
-        canvas.create_text(150, 20, text="Packet Distribution", font=("Arial", 14))
+        canvas.create_text(150, 20, text="Packet Distribution", font=("Arial", 14), fill="#ffffff")
 
         
 
