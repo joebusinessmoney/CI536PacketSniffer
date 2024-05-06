@@ -19,6 +19,6 @@ class Controller():
         self.model.setFilter(filter_string)
     
     def clearFilter(self):
-        self.model.clearFilter()  # This method should reset relevant model state
-        self.view.refreshPacketList()  # Refresh the view to show all packets
+        self.model.clearFilter()
+        self.view.refreshPacketList()
 
