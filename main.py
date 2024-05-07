@@ -70,20 +70,27 @@ class Main():
             else:
                  return False
     
-    def checkSklearn(self):
+    def checkScikitlearn(self):
         if self.os_system != "Linux":
             try:
                 from sklearn.ensemble import RandomForestClassifier
-                print("*** Sklearn is Already Installed ***")
+                print("*** Scikit-learn is Already Installed ***")
                 return True
             except ImportError:
-                install = input("*** Sklearn is Not Installed. This Dependency is Required. Would You Like to Install it? (Y/n) ***").strip().lower()
+                install = input("*** Scikit-learn is Not Installed. This Dependency is Required. Would You Like to Install it? (Y/n) ***").strip().lower()
             if install in ["y", "yes"]:
                 installed = self.installPackage("scikit-learn", "install")
                 return installed
             else:
                  return False
-                 
+        else:
+            try:
+                from sklearn.ensemble import RandomForestClassifier
+                print("*** Scikit-learn is Already Installed ***")
+                return True
+            except ImportError:
+                print("*** Scikit-learn is Not Installed on This Linux Device. This Dependency is Required. Please Follow These Steps to Install: https://www.geeksforgeeks.org/how-to-install-scikit-learn-on-linux/")
+                return False
     def checkScapy(self):
         try:
             import scapy
@@ -114,7 +121,7 @@ class Main():
         time.sleep(2)
 
         print("*** Checking if Dependencies are Installed ... ***")
-        if all([self.checkScapy(), self.checkCustomTkinter(), self.checkPandas(), self.checkSklearn()]):
+        if all([self.checkScapy(), self.checkCustomTkinter(), self.checkPandas(), self.checkScikitlearn()]):
             time.sleep(2)
             from mvc import MVC
             mvc = MVC(self.os_system)
